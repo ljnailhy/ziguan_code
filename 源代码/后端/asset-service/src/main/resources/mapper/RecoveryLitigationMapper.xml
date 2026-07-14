@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jk.asset.mapper.proceeding.RecoveryLitigationMapper">
+
+  <!-- 通用查询结果列 -->
+  <sql id="Base_Column_List">
+    t0.id,
+    t0.tenant_id,
+    t0.creator,
+    t0.create_stamp,
+    t0.last_editor,
+    t0.last_edit_stamp,
+    t0.is_stock,
+    t0.is_submit,
+    t0.compensation_amount,
+    t0.interest,
+    t0.liquidated_damages,
+    t0.other_fees,
+    t0.project_id,
+    t0.law_firm_id,
+    t0.project_status,
+    t0.remarks,
+    t0.is_deleted
+  </sql>
+
+  <select id="findAll" resultType="com.jk.asset.model.entity.proceeding.RecoveryLitigation">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM recovery_litigation t0
+    <where>
+      <if test="request.createStampRange != null and request.createStampRange.size() > 0">
+        AND t0.create_stamp BETWEEN
+        <foreach collection="request.createStampRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.id != null">
+        AND t0.id = #{request.id}
+      </if>
+      <if test="request.tenantId != null">
+        AND t0.tenant_id = #{request.tenantId}
+      </if>
+      <if test="request.creator != null">
+        AND t0.creator = #{request.creator}
+      </if>
+      <if test="request.createStamp != null">
+        AND t0.create_stamp = #{request.createStamp}
+      </if>
+      <if test="request.lastEditor != null">
+        AND t0.last_editor = #{request.lastEditor}
+      </if>
+      <if test="request.lastEditStamp != null">
+        AND t0.last_edit_stamp = #{request.lastEditStamp}
+      </if>
+      <if test="request.isSubmit != null">
+        AND t0.is_submit = #{request.isSubmit}
+      </if>
+      <if test="request.isStock != null">
+        AND t0.is_stock = #{request.isStock}
+      </if>
+      <if test="request.compensationAmount != null">
+        AND t0.compensation_amount = #{request.compensationAmount}
+      </if>
+      <if test="request.interest != null">
+        AND t0.interest = #{request.interest}
+      </if>
+      <if test="request.liquidatedDamages != null">
+        AND t0.liquidated_damages = #{request.liquidatedDamages}
+      </if>
+      <if test="request.otherFees != null">
+        AND t0.other_fees = #{request.otherFees}
+      </if>
+      <if test="request.projectId != null">
+        AND t0.project_id = #{request.projectId}
+      </if>
+      <if test="request.lawFirmId != null">
+        AND t0.law_firm_id = #{request.lawFirmId}
+      </if>
+      <if test="request.projectStatus != null">
+        AND t0.project_status = #{request.projectStatus}
+      </if>
+      <if test="request.remarks != null">
+        AND t0.remarks = #{request.remarks}
+      </if>
+      <if test="request.isDeleted != null">
+        AND t0.is_deleted = #{request.isDeleted}
+      </if>
+    </where>
+    <choose>
+      <when test="request.field != null and request.order != null">
+        ORDER BY ${request.field} ${request.order}
+      </when>
+      <otherwise>
+        ORDER BY t0.id DESC
+      </otherwise>
+    </choose>
+  </select>
+</mapper>

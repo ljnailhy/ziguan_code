@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jk.asset.mapper.property.LeaseInfoMapper">
+
+  <!-- 通用查询结果列 -->
+  <sql id="Base_Column_List">
+    t0.id,
+    t0.tenant_id,
+    t0.creator,
+    t0.create_stamp,
+    t0.last_editor,
+    t0.last_edit_stamp,
+    t0.estimate_id,
+    t0.estimate_money,
+    t0.estimate_date,t0.estimate_end_date,
+    t0.agency_fee,
+    t0.contacts,
+    t0.contacts_phone,
+    t0.dispose_programme,
+    t0.month_rent,
+    t0.year_rent,
+    t0.margin,
+    t0.lease_term_start,
+    t0.lease_term_end,
+    t0.payment_cycle,
+    t0.lessee,
+    t0.lease_purpose,
+    t0.flow_state,
+    t0.remark,
+    t0.is_deleted,
+    t0.is_estimate,
+    t0.intermediary_id,
+    t0.intermediary_fee
+  </sql>
+
+  <select id="findAll" resultType="com.jk.asset.model.dto.property.LeaseInfoDTO">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM lease_info t0
+    left join property_bill propBill on t0.id = propBill.do_id
+    left join customer_info customerInfo on customerInfo.id = t0.lessee
+    left join agency agency on agency.id = t0.estimate_id
+    <where>
+      <if test="request.createStampRange != null and request.createStampRange.size() > 0">
+        AND t0.create_stamp BETWEEN
+        <foreach collection="request.createStampRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.flowState != null">
+        AND t0.flow_state = #{request.flowState}
+      </if>
+      <if test="request.leaseTermEndRange != null and request.leaseTermEndRange.size() > 0">
+        AND t0.lease_term_end BETWEEN
+        <foreach collection="request.leaseTermEndRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.propertyId != null">
+        AND propBill.property_id = #{request.propertyId}
+      </if>
+      <if test="request.id != null">
+        AND t0.id = #{request.id}
+      </if>
+      <if test="request.tenantId != null">
+        AND t0.tenant_id = #{request.tenantId}
+      </if>
+      <if test="request.creator != null">
+        AND t0.creator = #{request.creator}
+      </if>
+      <if test="request.createStamp != null">
+        AND t0.create_stamp = #{request.createStamp}
+      </if>
+      <if test="request.lastEditor != null">
+        AND t0.last_editor = #{request.lastEditor}
+      </if>
+      <if test="request.lastEditStamp != null">
+        AND t0.last_edit_stamp = #{request.lastEditStamp}
+      </if>
+      <if test="request.estimateId != null">
+        AND t0.estimate_id = #{request.estimateId}
+      </if>
+      <if test="request.estimateName != null">
+        AND agency.agency_name LIKE CONCAT('%',#{request.estimateName},'%')
+      </if>
+      <if test="request.estimateMoney != null">
+        AND t0.estimate_money = #{request.estimateMoney}
+      </if>
+      <if test="request.estimateDate != null">
+        AND t0.estimate_date = #{request.estimateDate}
+      </if>
+      <if test="request.estimateEndDate != null">
+        AND t0.estimate_end_date = #{request.estimateEndDate}
+      </if>
+      <if test="request.agencyFee != null">
+        AND t0.agency_fee = #{request.agencyFee}
+      </if>
+      <if test="request.contacts != null">
+        AND t0.contacts = #{request.contacts}
+      </if>
+      <if test="request.contactsPhone != null">
+        AND t0.contacts_phone = #{request.contactsPhone}
+      </if>
+      <if test="request.disposeProgramme != null">
+        AND t0.dispose_programme = #{request.disposeProgramme}
+      </if>
+      <if test="request.monthRent != null">
+        AND t0.month_rent = #{request.monthRent}
+      </if>
+      <if test="request.yearRent != null">
+        AND t0.year_rent = #{request.yearRent}
+      </if>
+      <if test="request.margin != null">
+        AND t0.margin = #{request.margin}
+      </if>
+      <if test="request.leaseTermStart != null">
+        AND t0.lease_term_start = #{request.leaseTermStart}
+      </if>
+      <if test="request.leaseTermEnd != null">
+        AND t0.lease_term_end = #{request.leaseTermEnd}
+      </if>
+      <if test="request.paymentCycle != null">
+        AND t0.payment_cycle = #{request.paymentCycle}
+      </if>
+      <if test="request.lessee != null">
+        AND t0.lessee = #{request.lessee}
+      </if>
+      <if test="request.lesseeName != null">
+        AND customerInfo.customer_name LIKE CONCAT('%',#{request.lesseeName},'%')
+      </if>
+      <if test="request.remark != null">
+        AND t0.remark LIKE CONCAT('%',#{request.remark},'%')
+      </if>
+      <if test="request.leasePurpose != null">
+        AND t0.lease_purpose = #{request.leasePurpose}
+      </if>
+      <if test="request.isDeleted != null">
+        AND t0.is_deleted = #{request.isDeleted}
+      </if>
+    </where>
+    GROUP BY t0.id
+    <choose>
+      <when test="request.field != null and request.order != null">
+        ORDER BY ${request.field} ${request.order}
+      </when>
+      <otherwise>
+        ORDER BY t0.id DESC
+      </otherwise>
+    </choose>
+  </select>
+</mapper>

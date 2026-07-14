@@ -1,0 +1,78 @@
+import http from "@/api";
+import { VITE_API_ASSET_URL } from "@/api/config/servicePort";
+import { ${entity}Request, ${entity}PageRequest, ${entity}DTO } from "./interface";
+
+/**
+ *  $!{table.comment}接口
+ * （不建议写成 request.post(xxx)，因为这样 post 时，无法 params 与 data 同时传参）
+ * 后端控制路由，isRequestRoutes 为 true，则开启后端控制路由
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+export function ${table.entityPath}() {
+  #set($context = "#if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${schemaName}${table.name}#end")
+  #set($context = $context.replace("_", "/"))
+  const CONTEXT = "$context";
+  return {
+    /**
+     * 新增
+     *
+     * @param params ${table.comment}入参
+     * @returns Result
+     * @author ${author}
+     * @since ${date}
+     */
+    add: (params: Partial<${entity}Request>) => {
+      return http.post<${entity}DTO>(`${VITE_API_ASSET_URL}${CONTEXT}`, params);
+    },
+
+    /**
+     * 删除
+     *
+     * @param id 主键
+     * @returns Result
+     * @author ${author}
+     * @since ${date}
+     */
+    delete: (id: string | number) => {
+      return http.delete(`${VITE_API_ASSET_URL}${CONTEXT}/${id}`);
+    },
+
+    /**
+     * 修改
+     *
+     * @param params ${table.comment}入参
+     * @returns Result
+     * @author ${author}
+     * @since ${date}
+     */
+    update: (params: Partial<${entity}Request>) => {
+      return http.put<${entity}DTO>(`${VITE_API_ASSET_URL}${CONTEXT}`, params);
+    },
+
+    /**
+     * 单个查找
+     *
+     * @param id 主键
+     * @returns Result
+     * @author ${author}
+     * @since ${date}
+     */
+    findById: (id: string | number) => {
+      return http.get<${entity}DTO>(`${VITE_API_ASSET_URL}${CONTEXT}/${id}`);
+    },
+
+    /**
+     * 分页查找
+     *
+     * @param params ${table.comment}分页入参(含页码)
+     * @returns Result
+     * @author ${author}
+     * @since ${date}
+     */
+    findAll: (params: ${entity}PageRequest) => {
+      return http.post<Array<${entity}DTO>>(`${VITE_API_ASSET_URL}${CONTEXT}s?current=${params.current}&size=${params.size}`, params);
+    }
+  };
+}

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jk.asset.mapper.ProjectInfoExtMapper">
+
+  <!-- 通用查询结果列 -->
+  <sql id="Base_Column_List">
+    t0.id,
+    t0.tenant_id,
+    t0.creator,
+    t0.create_stamp,
+    t0.last_editor,
+    t0.last_edit_stamp,
+    t0.type,
+    t0.cooperate_bank,
+    t0.cooperate_bank_branch,
+    t0.industry_type,
+    t0.product_name,
+    t0.big_small,
+    t0.gover_type,
+    t0.debt_begin_date,
+    t0.debt_end_date,
+    t0.loan_money,
+    t0.pact_code,
+    t0.loan_code,
+    t0.guarantee_rate,
+    t0.risk_compensation,
+    t0.aid,
+    t0.aname,
+    t0.acode,
+    t0.bid,
+    t0.bcode,
+    t0.bname,
+    t0.loan_pact_code,
+    t0.relation_enterprise,
+    t0.relation_enterprise_no,
+    t0.pled_pact_code
+  </sql>
+
+  <select id="litigationLedger" resultType="com.jk.asset.model.dto.ProjectInfoExtDTO">
+    SELECT
+      proj.project_name,
+      proj.belong_province,
+      proj.belong_city,
+      proj.belong_district,
+      proj.compensation_money,
+      proj.compensation_date,
+      proj.transfer_date,
+      proj.manage,
+      proj.project_state,
+      law.name as lawFirmName,
+      <include refid="Base_Column_List" />
+    FROM project_info_ext t0 JOIN project_info proj ON t0.id=proj.id
+        left join law_firm_info law on proj.law_firm_id = law.id and law.is_deleted = 0
+    <where>
+      <if test="request.projectName != null">
+        AND proj.project_name LIKE CONCAT ('%',#{request.projectName},'%')
+      </if>
+      <if test="request.manage != null">
+        AND proj.manage LIKE CONCAT ('%',#{request.manage},'%')
+      </if>
+      <if test="request.compensationDateRange != null and request.compensationDateRange.size() > 0">
+        AND proj.compensation_date BETWEEN
+        <foreach collection="request.compensationDateRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.orgUserIds != null and request.orgUserIds.size() > 0">
+        AND (proj.affiliated_org IN
+        <foreach collection="request.orgUserIds" index="index" item="item" open="(" separator="," close=")">      #{item}
+        </foreach>  OR
+        <foreach collection="request.orgUserIds" index="index" item="item" open="" separator=" OR " close="">
+          proj.manage LIKE CONCAT('%',#{item},'%')
+        </foreach>
+        )
+      </if>
+      <if test="request.userIds != null and request.userIds.size() > 0">
+        AND (
+        <foreach collection="request.userIds" index="index" item="item" open="" separator=" OR " close="">proj.manage LIKE
+          CONCAT('%',#{item},'%')
+        </foreach>
+        )
+      </if>
+      <if test="request.industryType != null">
+        AND t0.industry_type = #{request.industryType}
+      </if>
+      <if test="request.projectState != null">
+        AND proj.project_state = #{request.projectState}
+      </if>
+      <if test="request.projectStateList != null and request.projectStateList.size() > 0">
+        AND proj.project_state in
+        <foreach collection="request.projectStateList" index="index" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+    </where>
+  </select>
+
+  <select id="findAll" resultType="com.jk.asset.model.entity.ProjectInfoExt">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM project_info_ext t0
+    <where>
+      <if test="request.createStampRange != null and request.createStampRange.size() > 0">
+        AND t0.create_stamp BETWEEN
+        <foreach collection="request.createStampRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.id != null">
+        AND t0.id = #{request.id}
+      </if>
+      <if test="request.tenantId != null">
+        AND t0.tenant_id = #{request.tenantId}
+      </if>
+      <if test="request.creator != null">
+        AND t0.creator = #{request.creator}
+      </if>
+      <if test="request.createStamp != null">
+        AND t0.create_stamp = #{request.createStamp}
+      </if>
+      <if test="request.lastEditor != null">
+        AND t0.last_editor = #{request.lastEditor}
+      </if>
+      <if test="request.lastEditStamp != null">
+        AND t0.last_edit_stamp = #{request.lastEditStamp}
+      </if>
+      <if test="request.type != null">
+        AND t0.type = #{request.type}
+      </if>
+      <if test="request.cooperateBank != null">
+        AND t0.cooperate_bank = #{request.cooperateBank}
+      </if>
+      <if test="request.cooperateBankBranch != null">
+        AND t0.cooperate_bank_branch = #{request.cooperateBankBranch}
+      </if>
+      <if test="request.industryType != null">
+        AND t0.industry_type = #{request.industryType}
+      </if>
+      <if test="request.productName != null">
+        AND t0.product_name = #{request.productName}
+      </if>
+      <if test="request.bigSmall != null">
+        AND t0.big_small = #{request.bigSmall}
+      </if>
+      <if test="request.goverType != null">
+        AND t0.gover_type = #{request.goverType}
+      </if>
+      <if test="request.debtBeginDate != null">
+        AND t0.debt_begin_date = #{request.debtBeginDate}
+      </if>
+      <if test="request.debtEndDate != null">
+        AND t0.debt_end_date = #{request.debtEndDate}
+      </if>
+      <if test="request.loanMoney != null">
+        AND t0.loan_money = #{request.loanMoney}
+      </if>
+      <if test="request.pactCode != null">
+        AND t0.pact_code = #{request.pactCode}
+      </if>
+      <if test="request.loanCode != null">
+        AND t0.loan_code = #{request.loanCode}
+      </if>
+      <if test="request.guaranteeRate != null">
+        AND t0.guarantee_rate = #{request.guaranteeRate}
+      </if>
+      <if test="request.riskCompensation != null">
+        AND t0.risk_compensation = #{request.riskCompensation}
+      </if>
+      <if test="request.aid != null">
+        AND t0.aid = #{request.aid}
+      </if>
+      <if test="request.aname != null">
+        AND t0.aname = #{request.aname}
+      </if>
+      <if test="request.acode != null">
+        AND t0.acode = #{request.acode}
+      </if>
+      <if test="request.bid != null">
+        AND t0.bid = #{request.bid}
+      </if>
+      <if test="request.bcode != null">
+        AND t0.bcode = #{request.bcode}
+      </if>
+      <if test="request.bname != null">
+        AND t0.bname = #{request.bname}
+      </if>
+      <if test="request.loanPactCode != null">
+        AND t0.loan_pact_code = #{request.loanPactCode}
+      </if>
+      <if test="request.relationEnterprise != null">
+        AND t0.relation_enterprise = #{request.relationEnterprise}
+      </if>
+      <if test="request.relationEnterpriseNo != null">
+        AND t0.relation_enterprise_no = #{request.relationEnterpriseNo}
+      </if>
+      <if test="request.pledPactCode != null">
+        AND t0.pled_pact_code = #{request.pledPactCode}
+      </if>
+    </where>
+    <choose>
+      <when test="request.field != null and request.order != null">
+        ORDER BY ${request.field} ${request.order}
+      </when>
+      <otherwise>
+        ORDER BY t0.id DESC
+      </otherwise>
+    </choose>
+  </select>
+</mapper>

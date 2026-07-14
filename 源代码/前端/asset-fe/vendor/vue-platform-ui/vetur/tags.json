@@ -1,0 +1,94 @@
+{
+    "dict-date": {
+        "attributes": [],
+        "description": "平台前端组件"
+    },
+    "dict-user-name": {
+        "attributes": [],
+        "description": "平台前端组件"
+    },
+    "dict-org-name": {
+        "attributes": [],
+        "description": "平台前端组件"
+    },
+    "dict-name": {
+        "attributes": [],
+        "description": "平台前端组件"
+    },
+    "dict-switch": {
+        "attributes": [],
+        "description": "平台前端组件"
+    },
+    "dict-enum": {
+        "attributes": [],
+        "description": "平台前端组件"
+    },
+    "dict-tenant": {
+        "attributes": [],
+        "description": "平台前端组件"
+    },
+    "dict-menu": {
+        "attributes": [],
+        "description": "平台前端组件"
+    },
+    "dict-version": {
+        "attributes": [],
+        "description": "平台前端组件"
+    },
+    "dict-area": {
+        "attributes": [],
+        "description": "平台前端组件"
+    },
+    "vz-select": {
+        "attributes": [],
+        "description": "平台前端组件"
+    },
+    "vz-user": {
+        "attributes": [],
+        "description": "平台前端组件"
+    },
+    "vz-enum": {
+        "attributes": [],
+        "description": "平台前端组件"
+    },
+    "vz-tenant": {
+        "attributes": [],
+        "description": "平台前端组件"
+    },
+    "vz-menu": {
+        "attributes": [],
+        "description": "平台前端组件"
+    },
+    "vz-org": {
+        "attributes": [],
+        "description": "平台前端组件"
+    },
+    "vz-version": {
+        "attributes": [],
+        "description": "平台前端组件"
+    },
+    "vz-area": {
+        "attributes": [],
+        "description": "平台前端组件"
+    },
+    "vz-upload": {
+        "attributes": [],
+        "description": "平台前端组件"
+    },
+    "vz-role,": {
+        "attributes": [],
+        "description": "平台前端组件"
+    },
+    "vz-table": {
+        "attributes": [],
+        "description": "平台前端组件"
+    },
+    "vz-table-search": {
+        "attributes": [],
+        "description": "平台前端组件"
+    },
+    "vz-table-body": {
+        "attributes": [],
+        "description": "平台前端组件"
+    }
+}

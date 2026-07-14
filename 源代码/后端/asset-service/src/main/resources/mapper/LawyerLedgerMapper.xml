@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jk.asset.mapper.ledger.LawyerLedgerMapper">
+
+  <select id="findAll" resultType="com.jk.asset.model.dto.LawyerLedgerDTO">
+    select
+      lfi.id,lfi.`name`,
+      count(pro.id) as pro_num,
+      sum(pro.compensation_money) as pro_money,
+      sum(sub.collection_amount) as pro_amount,
+      (sum(sub.collection_amount)/sum(pro.compensation_money)*100) as collection_ratio
+    from law_firm_info lfi
+    left join project_info pro on lfi.id=pro.law_firm_id
+    left join (
+      select
+          project_id,lawyer_id,sum(collection_amount) as collection_amount
+      from recovery_payment_collection
+      where collection_status=567117777551429
+      GROUP BY project_id,lawyer_id
+    ) sub on lfi.id=sub.lawyer_id and pro.id=sub.project_id
+    where lfi.is_deleted = 0
+    <if test="request.name != null">
+      AND lfi.`name` LIKE CONCAT('%', #{request.name},'%')
+    </if>
+    group by lfi.id,lfi.`name`
+    <choose>
+      <when test="request.field != null and request.order != null">
+        ORDER BY ${request.field} ${request.order}
+      </when>
+      <otherwise>
+        ORDER BY lfi.id DESC
+      </otherwise>
+    </choose>
+  </select>
+</mapper>

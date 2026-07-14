@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jk.asset.mapper.RecoveryPaymentCollectionMapper">
+
+  <!-- 通用查询结果列 -->
+  <sql id="Base_Column_List">
+    t0.id,
+    t0.tenant_id,
+    t0.creator,
+    t0.create_stamp,
+    t0.last_editor,
+    t0.last_edit_stamp,
+    t0.project_name,
+    t0.project_id,
+    t0.collection_amount,
+    t0.collection_date,
+    t0.collection_sign,
+    t0.collection_ascription,
+    t0.collection_type,
+    t0.is_collection_historical,
+    t0.collection_summary,
+    t0.is_deleted,
+    t0.remarks,
+    t0.compensatory_cash,
+    t0.default_cash,
+    t0.interest,
+    t0.other_fee,
+    t0.lawyer_name,
+    t0.lawyer_id,
+    t0.flow_state,
+    t0.collection_status
+  </sql>
+
+  <select id="findAll" resultType="com.jk.asset.model.entity.RecoveryPaymentCollection">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM recovery_payment_collection t0 left join law_firm_info t1 on t0.lawyer_id = t1.id and t1.is_deleted = 0
+    left join project_info t2 on t0.project_id = t2.id and t2.is_deleted = 0
+    <where>
+      <if test="request.createStampRange != null and request.createStampRange.size() > 0">
+        AND t0.collection_date BETWEEN
+        <foreach collection="request.createStampRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.orgUserIds != null and request.orgUserIds.size() > 0">
+        AND (t2.affiliated_org IN
+        <foreach collection="request.orgUserIds" index="index" item="item" open="(" separator="," close=")">      #{item}
+        </foreach>  OR
+        <foreach collection="request.orgUserIds" index="index" item="item" open="" separator=" OR " close="">
+          t2.manage LIKE CONCAT('%',#{item},'%')
+        </foreach>
+              )
+      </if>
+      <if test="request.collectionDateRange != null and request.collectionDateRange.size() > 0">
+        AND t0.collection_date BETWEEN
+        <foreach collection="request.collectionDateRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+
+      <if test="request.flowState != null">
+        AND t0.flow_state = #{request.flowState}
+      </if>
+      <if test="request.lawyerName != null">
+        AND t1.name  LIKE CONCAT ('%',#{request.lawyerName},'%')
+      </if>
+
+      <if test="request.projectInfoList != null and request.projectInfoList.size() > 0">
+        AND t0.project_id in
+        <foreach collection="request.projectInfoList" item="item" separator="," open="(" close=")">
+          #{item}
+        </foreach>
+      </if>
+
+      <if test="request.id != null">
+        AND t0.id = #{request.id}
+      </if>
+      <if test="request.tenantId != null">
+        AND t0.tenant_id = #{request.tenantId}
+      </if>
+      <if test="request.collectionStatus != null">
+        AND t0.collection_status = #{request.collectionStatus}
+      </if>
+      <if test="request.creator != null">
+        AND t0.creator = #{request.creator}
+      </if>
+      <if test="request.createStamp != null">
+        AND t0.create_stamp = #{request.createStamp}
+      </if>
+      <if test="request.lawyerId != null">
+        AND t0.lawyer_id = #{request.lawyerId}
+      </if>
+      <if test="request.lawyerName!= null">
+        AND t0.lawyer_name LIKE CONCAT ('%',#{request.lawyerName},'%')
+      </if>
+      <if test="request.lastEditor != null">
+        AND t0.last_editor = #{request.lastEditor}
+      </if>
+      <if test="request.lastEditStamp != null">
+        AND t0.last_edit_stamp = #{request.lastEditStamp}
+      </if>
+      <if test="request.projectName != null">
+       AND t0.project_name LIKE CONCAT ('%',#{request.projectName},'%')
+      </if>
+      <if test="request.projectId != null">
+      AND t0.project_id = #{request.projectId}
+      </if>
+      <if test="request.collectionAmount != null">
+        AND t0.collection_amount = #{request.collectionAmount}
+      </if>
+      <if test="request.collectionDate != null">
+        AND t0.collection_date = #{request.collectionDate}
+      </if>
+      <if test="request.collectionSign != null">
+        AND t0.collection_sign = #{request.collectionSign}
+      </if>
+      <if test="request.collectionAscription != null">
+        AND t0.collection_ascription = #{request.collectionAscription}
+      </if>
+      <if test="request.collectionType != null">
+        AND t0.collection_type = #{request.collectionType}
+      </if>
+      <if test="request.isCollectionHistorical != null">
+        AND t0.is_collection_historical = #{request.isCollectionHistorical}
+      </if>
+      <if test="request.collectionSummary != null">
+        AND t0.collection_summary = #{request.collectionSummary}
+      </if>
+      <if test="request.isDeleted != null">
+        AND t0.is_deleted = #{request.isDeleted}
+      </if>
+      <if test="request.remarks != null">
+        AND t0.remarks = #{request.remarks}
+      </if>
+      <if test="request.compensatoryCash != null">
+        AND t0.compensatory_cash = #{request.compensatoryCash}
+      </if>
+      <if test="request.defaultCash != null">
+        AND t0.default_cash = #{request.defaultCash}
+      </if>
+      <if test="request.interest != null">
+        AND t0.interest = #{request.interest}
+      </if>
+      <if test="request.otherFee != null">
+        AND t0.other_fee = #{request.otherFee}
+      </if>
+    </where>
+    <choose>
+      <when test="request.field != null and request.order != null">
+        ORDER BY ${request.field} ${request.order}
+      </when>
+      <otherwise>
+        ORDER BY t0.id DESC
+      </otherwise>
+    </choose>
+  </select>
+</mapper>

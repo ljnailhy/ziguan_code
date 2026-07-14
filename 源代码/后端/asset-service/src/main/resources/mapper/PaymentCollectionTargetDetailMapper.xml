@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jk.asset.mapper.PaymentCollectionTargetDetailMapper">
+
+  <!-- 通用查询结果列 -->
+  <sql id="Base_Column_List">
+    t0.id,
+    t0.tenant_id,
+    t0.creator,
+    t0.create_stamp,
+    t0.last_editor,
+    t0.last_edit_stamp,
+    t0.target_id,
+    t0.company_id,
+    t0.dept_id,
+    t0.user_id,
+    t0.target_detail_money,
+    t0.entrust_detail_money
+  </sql>
+
+  <select id="findAll" resultType="com.jk.asset.model.entity.PaymentCollectionTargetDetail">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM payment_collection_target_detail t0
+    <where>
+      <if test="request.createStampRange != null and request.createStampRange.size() > 0">
+        AND t0.create_stamp BETWEEN
+        <foreach collection="request.createStampRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.id != null">
+        AND t0.id = #{request.id}
+      </if>
+      <if test="request.tenantId != null">
+        AND t0.tenant_id = #{request.tenantId}
+      </if>
+      <if test="request.creator != null">
+        AND t0.creator = #{request.creator}
+      </if>
+      <if test="request.createStamp != null">
+        AND t0.create_stamp = #{request.createStamp}
+      </if>
+      <if test="request.lastEditor != null">
+        AND t0.last_editor = #{request.lastEditor}
+      </if>
+      <if test="request.lastEditStamp != null">
+        AND t0.last_edit_stamp = #{request.lastEditStamp}
+      </if>
+      <if test="request.companyId != null">
+        AND t0.company_id = #{request.companyId}
+      </if>
+      <if test="request.deptId != null">
+        AND t0.dept_id = #{request.deptId}
+      </if>
+      <if test="request.userId != null">
+        AND t0.user_id = #{request.userId}
+      </if>
+      <if test="request.targetDetailMoney != null">
+        AND t0.target_detail_money = #{request.targetDetailMoney}
+      </if>
+    </where>
+    <choose>
+      <when test="request.field != null and request.order != null">
+        ORDER BY ${request.field} ${request.order}
+      </when>
+      <otherwise>
+        ORDER BY t0.id DESC
+      </otherwise>
+    </choose>
+  </select>
+</mapper>

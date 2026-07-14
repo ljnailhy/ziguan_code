@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jk.asset.mapper.ContractInfoMapper">
+
+  <!-- 通用查询结果列 -->
+  <sql id="Base_Column_List">
+    t0.id,
+    t0.tenant_id,
+    t0.creator,
+    t0.create_stamp,
+    t0.last_editor,
+    t0.last_edit_stamp,
+    t0.contract_name,
+    t0.contract_code,
+    t0.contract_type,
+    t0.contract_money,
+    t0.signing_date,
+    t0.start_date,
+    t0.end_date,
+    t0.contract_abstract,
+    t0.agent_way,
+    t0.law_firm_id,
+    t0.agency_fee_ratio,
+    t0.follow_up,
+    t0.is_deleted
+  </sql>
+
+  <select id="findAll" resultType="com.jk.asset.model.entity.ContractInfo">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM contract_info t0
+    <where>
+      t0.is_deleted = 0
+      <if test="request.createStampRange != null and request.createStampRange.size() > 0">
+        AND t0.create_stamp BETWEEN
+        <foreach collection="request.createStampRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.ids != null and request.ids.size != 0">
+        AND t0.id in
+        <foreach collection="request.ids" index="index" item="ids" open="(" separator="," close=")">
+          #{ids}
+        </foreach>
+      </if>
+      <if test="request.orgUserIds != null and request.orgUserIds.size() > 0">
+        AND (
+        <foreach collection="request.orgUserIds" index="index" item="item" open="" separator=" OR " close="">
+          t0.follow_up LIKE CONCAT('%',#{item},'%')
+        </foreach>
+        )
+      </if>
+      <if test="request.id != null">
+        AND t0.id = #{request.id}
+      </if>
+      <if test="request.followUp != null">
+        AND t0.follow_up LIKE CONCAT('%',#{request.followUp},'%')
+      </if>
+      <if test="request.tenantId != null">
+        AND t0.tenant_id = #{request.tenantId}
+      </if>
+      <if test="request.creator != null">
+        AND t0.creator = #{request.creator}
+      </if>
+      <if test="request.createStamp != null">
+        AND t0.create_stamp = #{request.createStamp}
+      </if>
+      <if test="request.lastEditor != null">
+        AND t0.last_editor = #{request.lastEditor}
+      </if>
+      <if test="request.lastEditStamp != null">
+        AND t0.last_edit_stamp = #{request.lastEditStamp}
+      </if>
+      <if test="request.contractName != null">
+        AND t0.contract_name LIKE CONCAT('%',#{request.contractName},'%')
+      </if>
+      <if test="request.contractCode != null">
+        AND t0.contract_code LIKE CONCAT('%',#{request.contractCode},'%')
+      </if>
+      <if test="request.contractType != null">
+        AND t0.contract_type = #{request.contractType}
+      </if>
+      <if test="request.contractMoney != null">
+        AND t0.contract_money = #{request.contractMoney}
+      </if>
+      <if test="request.signingDate != null">
+        AND t0.signing_date = #{request.signingDate}
+      </if>
+      <if test="request.startDate != null">
+        AND t0.start_date = #{request.startDate}
+      </if>
+      <if test="request.endDate != null">
+        AND t0.end_date = #{request.endDate}
+      </if>
+      <if test="request.contractAbstract != null">
+        AND t0.contract_abstract = #{request.contractAbstract}
+      </if>
+      <if test="request.agentWay != null">
+        AND t0.agent_way = #{request.agentWay}
+      </if>
+      <if test="request.lawFirmId != null">
+        AND t0.law_firm_id = #{request.lawFirmId}
+      </if>
+      <if test="request.agencyFeeRatio != null">
+        AND t0.agency_fee_ratio = #{request.agencyFeeRatio}
+      </if>
+      <if test="request.isDeleted != null">
+        AND t0.is_deleted = #{request.isDeleted}
+      </if>
+    </where>
+    <choose>
+      <when test="request.field != null and request.order != null">
+        ORDER BY ${request.field} ${request.order}
+      </when>
+      <otherwise>
+        ORDER BY t0.id DESC
+      </otherwise>
+    </choose>
+  </select>
+  <select id="lawFirmAgreementEndAll" resultType="com.jk.asset.model.dto.LawFirmAgreementDTO">
+    SELECT lfi.name as lawFirmName, ci.contract_name as contractName, ci.end_date as endDate,ci.id,ci.follow_up
+    FROM contract_info ci
+           INNER JOIN law_firm_info lfi ON ci.law_firm_id = lfi.id AND lfi.is_deleted = 0 AND lfi.enabled = 1
+    WHERE ci.is_deleted = 0
+      AND DATEDIFF(ci.end_date, NOW()) = 90;
+  </select>
+
+</mapper>

@@ -1,0 +1,16 @@
+源代码/前端/asset-fe/node_modules/
+源代码/后端/运行包/
+源代码/后端/**/target/
+.env*.local
+*.log
+/dist/
+源代码/前端/asset-fe/dist/
+.vite/
+.idea/
+.vscode/
+部署程序/
+湖南省融资担保集团资产管理系统 - 服务器连接方式.txt
+湖南省融资担保集团资产管理系统 - 部署配置指导书V2.0.docx
+
+!源代码/前端/asset-fe/vendor/vue-platform-ui/
+!源代码/前端/asset-fe/vendor/vue-platform-ui/**

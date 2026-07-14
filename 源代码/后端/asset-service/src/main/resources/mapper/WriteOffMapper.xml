@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jk.asset.mapper.WriteOffMapper">
+
+  <!-- 通用查询结果列 -->
+  <sql id="Base_Column_List">
+    t0.id,
+    t0.tenant_id,
+    t0.creator,
+    t0.create_stamp,
+    t0.last_editor,
+    t0.last_edit_stamp,
+    t0.project_name,
+     t0.project_id,
+    t0.compensation_amount,
+    t0.compensation_date,
+    t0.write_dff_amount,
+    t0.write_off_date,
+    t0.write_off_classification,
+    t0.total_collection_amount,
+    t0.remarks,
+    t0.is_deleted,
+    t0.write_off_status
+  </sql>
+
+  <select id="findAll" resultType="com.jk.asset.model.entity.WriteOff">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM write_off t0 left join project_info t2 on t0.project_id = t2.id and t2.is_deleted = 0
+    <where>
+      <if test="request.createStampRange != null and request.createStampRange.size() > 0">
+        AND t0.create_stamp BETWEEN
+        <foreach collection="request.createStampRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.writeOffDateRange != null and request.writeOffDateRange.size() > 0">
+        AND t0.write_off_date BETWEEN
+        <foreach collection="request.writeOffDateRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.orgUserIds != null and request.orgUserIds.size() > 0">
+        AND (t2.affiliated_org IN
+        <foreach collection="request.orgUserIds" index="index" item="item" open="(" separator="," close=")">#{item}
+        </foreach>
+        OR
+        <foreach collection="request.orgUserIds" index="index" item="item" open="" separator=" OR " close="">
+          t2.manage LIKE CONCAT('%',#{item},'%')
+        </foreach>
+        )
+      </if>
+      <if test="request.id != null">
+        AND t0.id = #{request.id}
+      </if>
+      <if test="request.writeOffStatus != null">
+        AND t0.write_off_status = #{request.writeOffStatus}
+      </if>
+      <if test="request.projectStateList != null and request.projectStateList.size() > 0">
+        AND t2.project_state in
+        <foreach collection="request.projectStateList" index="index" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.tenantId != null">
+        AND t0.tenant_id = #{request.tenantId}
+      </if>
+      <if test="request.creator != null">
+        AND t0.creator = #{request.creator}
+      </if>
+      <if test="request.createStamp != null">
+        AND t0.create_stamp = #{request.createStamp}
+      </if>
+      <if test="request.lastEditor != null">
+        AND t0.last_editor = #{request.lastEditor}
+      </if>
+      <if test="request.lastEditStamp != null">
+        AND t0.last_edit_stamp = #{request.lastEditStamp}
+      </if>
+      <if test="request.projectName != null">
+        AND t0.project_name LIKE CONCAT ('%',#{request.projectName},'%')
+      </if>
+      <if test="request.projectId != null">
+        AND t0.project_id = #{request.projectId}
+      </if>
+      <if test="request.compensationAmount != null">
+        AND t0.compensation_amount = #{request.compensationAmount}
+      </if>
+      <if test="request.compensationDate != null">
+        AND t0.compensation_date = #{request.compensationDate}
+      </if>
+      <if test="request.writeDffAmount != null">
+        AND t0.write_dff_amount = #{request.writeDffAmount}
+      </if>
+      <if test="request.writeOffDate != null">
+        AND t0.write_off_date = #{request.writeOffDate}
+      </if>
+      <if test="request.writeOffClassification != null">
+        AND t0.write_off_classification = #{request.writeOffClassification}
+      </if>
+      <if test="request.totalCollectionAmount != null">
+        AND t0.total_collection_amount = #{request.totalCollectionAmount}
+      </if>
+      <if test="request.remarks != null">
+        AND t0.remarks = #{request.remarks}
+      </if>
+      <if test="request.isDeleted != null">
+        AND t0.is_deleted = #{request.isDeleted}
+      </if>
+    </where>
+    <choose>
+      <when test="request.field != null and request.order != null">
+        ORDER BY ${request.field} ${request.order}
+      </when>
+      <otherwise>
+        ORDER BY t0.id DESC
+      </otherwise>
+    </choose>
+  </select>
+</mapper>

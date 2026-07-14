@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jk.asset.mapper.WorkRegisterMapper">
+
+  <!-- 通用查询结果列 -->
+  <sql id="Base_Column_List">
+    t0.id,
+    t0.tenant_id,
+    t0.creator,
+    t0.create_stamp,
+    t0.last_editor,
+    t0.last_edit_stamp,
+    t0.do_type,
+    t0.do_id,
+    t0.type,
+    t0.work_date,
+    t0.work_content,
+    proj.project_name,
+    t0.is_deleted
+  </sql>
+
+  <select id="findAll" resultType="com.jk.asset.model.dto.WorkRegisterDTO">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM work_register t0 JOIN project_info proj on proj.id = t0.do_id
+    <where>
+      <if test="request.createStampRange != null and request.createStampRange.size() > 0">
+        AND t0.create_stamp BETWEEN
+        <foreach collection="request.createStampRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.projectName != null">
+        AND proj.project_name like CONCAT('%',#{request.projectName},'%')
+      </if>
+      <if test="request.id != null">
+        AND t0.id = #{request.id}
+      </if>
+      <if test="request.tenantId != null">
+        AND t0.tenant_id = #{request.tenantId}
+      </if>
+      <if test="request.creator != null">
+        AND t0.creator = #{request.creator}
+      </if>
+      <if test="request.createStamp != null">
+        AND t0.create_stamp = #{request.createStamp}
+      </if>
+      <if test="request.lastEditor != null">
+        AND t0.last_editor = #{request.lastEditor}
+      </if>
+      <if test="request.lastEditStamp != null">
+        AND t0.last_edit_stamp = #{request.lastEditStamp}
+      </if>
+      <if test="request.doType != null">
+        AND t0.do_type = #{request.doType}
+      </if>
+      <if test="request.doId != null">
+        AND t0.do_id = #{request.doId}
+      </if>
+      <if test="request.doIds != null and request.doIds.size() > 0">
+        AND t0.do_id in
+        <foreach collection="request.doIds" index="index" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.type != null">
+        AND t0.type = #{request.type}
+      </if>
+      <if test="request.workDate != null">
+        AND t0.work_date = #{request.workDate}
+      </if>
+      <if test="request.workContent != null">
+        AND t0.work_content LIKE CONCAT ('%',#{request.workContent},'%')
+      </if>
+      <if test="request.isDeleted != null">
+        AND t0.is_deleted = #{request.isDeleted}
+      </if>
+    </where>
+    <choose>
+      <when test="request.field != null and request.order != null">
+        ORDER BY ${request.field} ${request.order}
+      </when>
+      <otherwise>
+        ORDER BY t0.id DESC
+      </otherwise>
+    </choose>
+  </select>
+</mapper>

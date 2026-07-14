@@ -1,0 +1,58 @@
+Configuration:
+  status: warn
+
+  Properties: # 定义全局变量
+    Property: # 缺省配置（用于开发环境）。其他环境需要在VM参数中指定，如下：
+      #测试：-Dlog.level=info -Dlog.level.platform=trace
+      #生产：-Dlog.level=warn -Dlog.level.platform=info
+      - name: log.level
+        value: info
+      - name: log.level.platform
+        value: trace
+      - name: log.filename
+        value: asset-service
+
+  Appenders:
+    Console:
+      name: Console
+      target: SYSTEM_OUT
+      ThresholdFilter:
+        level: ${sys:log.level}
+        onMatch: ACCEPT
+        onMismatch: DENY
+      PatternLayout:
+        Pattern: "%d{yyyy-MM-dd HH:mm:ss,SSS}:%4p %t (%F:%L) - %m%n"
+    RollingFile:
+      - name: ROLLING_FILE
+        ignoreExceptions: false
+        fileName: logs/${sys:log.filename}.log
+        filePattern: "logs/$${date:yyyy-MM}/${sys:log.filename}-%d{yyyy-MM-dd}-%i.log.gz"
+        PatternLayout:
+          pattern: "%d{yyyy-MM-dd HH:mm:ss,SSS}:%4p %t (%C#%M:%L) - %m%n"
+        Policies:
+          TimeBasedTriggeringPolicy:
+            interval: 1
+            modulate: true
+          SizeBasedTriggeringPolicy:
+            size: "5 MB"
+        DefaultRolloverStrategy:
+          max: 200
+  Loggers:
+    Root:
+      level: ${sys:log.level}
+      AppenderRef:
+        - ref: Console
+        - ref: ROLLING_FILE
+    Logger:
+      - name: com.jk
+        additivity: false
+        level: ${sys:log.level.platform}
+        AppenderRef:
+          - ref: Console
+          - ref: ROLLING_FILE
+      - name: org.springframework.cloud.netflix.feign.AgentTargeter
+        additivity: false
+        level: ERROR
+        AppenderRef:
+          - ref: Console
+          - ref: ROLLING_FILE

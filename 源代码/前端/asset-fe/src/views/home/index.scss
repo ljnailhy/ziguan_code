@@ -1,0 +1,59 @@
+.home {
+  &-count {
+    background: url("./images/home2.png") no-repeat;
+    background-size: 100% 100%;
+    height: 125px;
+    color: #fff;
+    font-size: 22px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding-left: 20px;
+    &>div:first-child{
+      width: 62%;
+      &>div:last-child{
+        overflow: hidden;
+        word-wrap: break-word;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+      }
+    }
+    &_title {
+      padding-bottom: 15px;
+      font-size: 13px;
+      font-weight: normal;
+    }
+    span {
+      font-size: 14px;
+    }
+  }
+  &-count1 {
+    background: url("./images/home4.png") no-repeat;
+    background-size: 100% 100%;
+  }
+  &-count2 {
+    background: url("./images/home3.png") no-repeat;
+    background-size: 100% 100%;
+  }
+  &-count3 {
+    background: url("./images/home1.png") no-repeat;
+    background-size: 100% 100%;
+  }
+
+  .percentage-value {
+    display: block;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #fff;
+  }
+  .percentage-label {
+    display: block;
+    margin-top: 10px;
+    font-size: 10px;
+    color: #fff;
+  }
+}

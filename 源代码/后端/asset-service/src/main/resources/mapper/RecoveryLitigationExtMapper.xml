@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jk.asset.mapper.proceeding.RecoveryLitigationExtMapper">
+
+  <!-- 通用查询结果列 -->
+  <sql id="Base_Column_List">
+    t0.id,
+    t0.tenant_id,
+    t0.creator,
+    t0.create_stamp,
+    t0.last_editor,
+    t0.last_edit_stamp,
+    t0.remarks,
+    t0.back_compensation_amount,
+    t0.back_interest,
+    t0.back_liquidated_damages,
+    t0.back_other_fees,
+    t0.adjust_trial_date,
+    t0.adjust_code,
+    t0.filing_court_name,
+    t0.judge_name,
+    t0.filling_date,
+    t0.litigation_type,
+    t0.filling_code,
+    t0.judge_date,
+    t0.court_session_date
+  </sql>
+
+  <select id="findAll" resultType="com.jk.asset.model.entity.proceeding.RecoveryLitigationExt">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM recovery_litigation_ext t0
+    <where>
+      <if test="request.createStampRange != null and request.createStampRange.size() > 0">
+        AND t0.create_stamp BETWEEN
+        <foreach collection="request.createStampRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.id != null">
+        AND t0.id = #{request.id}
+      </if>
+      <if test="request.tenantId != null">
+        AND t0.tenant_id = #{request.tenantId}
+      </if>
+      <if test="request.creator != null">
+        AND t0.creator = #{request.creator}
+      </if>
+      <if test="request.createStamp != null">
+        AND t0.create_stamp = #{request.createStamp}
+      </if>
+      <if test="request.lastEditor != null">
+        AND t0.last_editor = #{request.lastEditor}
+      </if>
+      <if test="request.lastEditStamp != null">
+        AND t0.last_edit_stamp = #{request.lastEditStamp}
+      </if>
+      <if test="request.remarks != null">
+        AND t0.remarks = #{request.remarks}
+      </if>
+      <if test="request.backCompensationAmount != null">
+        AND t0.back_compensation_amount = #{request.backCompensationAmount}
+      </if>
+      <if test="request.backInterest != null">
+        AND t0.back_interest = #{request.backInterest}
+      </if>
+      <if test="request.backLiquidatedDamages != null">
+        AND t0.back_liquidated_damages = #{request.backLiquidatedDamages}
+      </if>
+      <if test="request.backOtherFees != null">
+        AND t0.back_other_fees = #{request.backOtherFees}
+      </if>
+      <if test="request.adjustTrialDate != null">
+        AND t0.adjust_trial_date = #{request.adjustTrialDate}
+      </if>
+      <if test="request.adjustCode != null">
+        AND t0.adjust_code = #{request.adjustCode}
+      </if>
+      <if test="request.filingCourtName != null">
+        AND t0.filing_court_name = #{request.filingCourtName}
+      </if>
+      <if test="request.judgeName != null">
+        AND t0.judge_name = #{request.judgeName}
+      </if>
+      <if test="request.fillingDate != null">
+        AND t0.filling_date = #{request.fillingDate}
+      </if>
+      <if test="request.litigationType != null">
+        AND t0.litigation_type = #{request.litigationType}
+      </if>
+      <if test="request.fillingCode != null">
+        AND t0.filling_code = #{request.fillingCode}
+      </if>
+      <if test="request.judgeDate != null">
+        AND t0.judge_date = #{request.judgeDate}
+      </if>
+      <if test="request.courtSessionDate != null">
+        AND t0.court_session_date = #{request.courtSessionDate}
+      </if>
+    </where>
+    <choose>
+      <when test="request.field != null and request.order != null">
+        ORDER BY ${request.field} ${request.order}
+      </when>
+      <otherwise>
+        ORDER BY t0.id DESC
+      </otherwise>
+    </choose>
+  </select>
+</mapper>

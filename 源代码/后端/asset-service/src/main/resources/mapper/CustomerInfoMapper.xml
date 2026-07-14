@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jk.asset.mapper.CustomerInfoMapper">
+
+  <!-- 通用查询结果列 -->
+  <sql id="Base_Column_List">
+    t0.id,
+    t0.tenant_id,
+    t0.creator,
+    t0.create_stamp,
+    t0.last_editor,
+    t0.last_edit_stamp,
+    t0.customer_name,
+    t0.document_type,
+    t0.document_code,
+    t0.contacts,
+    t0.contacts_phone,
+    t0.medium_source,
+    t0.customer_source,
+    t0.intentional_assets,
+    t0.remark
+  </sql>
+
+  <select id="findAll" resultType="com.jk.asset.model.entity.CustomerInfo">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM customer_info t0
+    <where>
+      <if test="request.createStampRange != null and request.createStampRange.size() > 0">
+        AND t0.create_stamp BETWEEN
+        <foreach collection="request.createStampRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.id != null">
+        AND t0.id = #{request.id}
+      </if>
+      <if test="request.tenantId != null">
+        AND t0.tenant_id = #{request.tenantId}
+      </if>
+      <if test="request.creator != null">
+        AND t0.creator = #{request.creator}
+      </if>
+      <if test="request.createStamp != null">
+        AND t0.create_stamp = #{request.createStamp}
+      </if>
+      <if test="request.lastEditor != null">
+        AND t0.last_editor = #{request.lastEditor}
+      </if>
+      <if test="request.lastEditStamp != null">
+        AND t0.last_edit_stamp = #{request.lastEditStamp}
+      </if>
+      <if test="request.customerName != null">
+        AND t0.customer_name LIKE CONCAT ('%',#{request.customerName},'%')
+      </if>
+      <if test="request.documentType != null">
+        AND t0.document_type  LIKE CONCAT ('%',#{request.documentType},'%')
+      </if>
+      <if test="request.documentCode != null">
+        AND t0.document_code LIKE CONCAT ('%',#{request.documentCode},'%')
+      </if>
+      <if test="request.contacts != null">
+        AND t0.contacts  LIKE CONCAT ('%',#{request.contacts},'%')
+      </if>
+      <if test="request.contactsPhone != null">
+        AND t0.contacts_phone  LIKE CONCAT ('%',#{request.contactsPhone},'%')
+      </if>
+      <if test="request.mediumSource != null">
+        AND t0.medium_source = #{request.mediumSource}
+      </if>
+      <if test="request.customerSource != null">
+        AND t0.customer_source = #{request.customerSource}
+      </if>
+      <if test="request.intentionalAssets != null">
+        AND t0.intentional_assets = #{request.intentionalAssets}
+      </if>
+      <if test="request.remark != null">
+        AND t0.remark = #{request.remark}
+      </if>
+    </where>
+    <choose>
+      <when test="request.field != null and request.order != null">
+        ORDER BY ${request.field} ${request.order}
+      </when>
+      <otherwise>
+        ORDER BY t0.id DESC
+      </otherwise>
+    </choose>
+  </select>
+</mapper>

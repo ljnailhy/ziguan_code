@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jk.asset.mapper.CompensatorySyncMapper">
+
+  <!-- 通用查询结果列 -->
+  <sql id="Base_Column_List">
+    t0.id,
+    t0.creator,
+    t0.create_stamp,
+    t0.last_edit_stamp,
+    t0.last_editor,
+    t0.sync_status,
+    t0.tenant_id,
+    t0.business_no,
+    t0.business_type,
+    t0.product_name,
+    t0.customer_name,
+    t0.customer_property,
+    t0.credential_type,
+    t0.credential_no,
+    t0.is_first_loan_account,
+    t0.project_from,
+    t0.province,
+    t0.city,
+    t0.area,
+    t0.cooperative_bank,
+    t0.cooperative_bank_third,
+    t0.industry_gxb,
+    t0.industry_jrj,
+    t0.industry_gxw,
+    t0.employed_population,
+    t0.total_assets,
+    t0.business_revenue,
+    t0.tax_amount,
+    t0.enterprise_size,
+    t0.industry_policy_support,
+    t0.debt_bill_start_day,
+    t0.debt_bill_due_day,
+    t0.debt_amount,
+    t0.loan_rate,
+    t0.principle_claim_contract_no,
+    t0.warranty_contract_no,
+    t0.guarantee_contract_no,
+    t0.debt_bill_no,
+    t0.guarantee_fee_rate,
+    t0.counter_guarantee_type,
+    t0.rist_type_after_guarantee,
+    t0.risk_rate_bank,
+    t0.risk_rate_origin,
+    t0.risk_rate_again,
+    t0.risk_rate_other,
+    t0.remark,
+    t0.relation_enterprise,
+    t0.relation_enterprise_no,
+    t0.contact,
+    t0.tel,
+    t0.business_manager_a,
+    t0.acode,
+    t0.aname,
+    t0.assist_b,
+    t0.bcode,
+    t0.bname,
+    t0.repayment_date,
+    t0.repayment_bank,
+    t0.repayment_amount,
+    t0.registered_address,
+    t0.current_address,
+    t0.risk_fund,
+    t0.anti_remark,
+    t0.related_bus_no,
+    t0.related_guarantee_no,
+    t0.created_dept_ids,
+    t0.created_company_id
+  </sql>
+
+  <select id="findAll" resultType="com.jk.asset.model.entity.CompensatorySync">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM compensatory_sync t0
+    <where>
+      <if test="request.repaymentDateRange != null and request.repaymentDateRange.size() > 0">
+        AND t0.repayment_date BETWEEN
+        <foreach collection="request.repaymentDateRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.id != null">
+        AND t0.id = #{request.id}
+      </if>
+      <if test="request.creator != null">
+        AND t0.creator = #{request.creator}
+      </if>
+      <if test="request.createStamp != null">
+        AND t0.create_stamp = #{request.createStamp}
+      </if>
+      <if test="request.lastEditStamp != null">
+        AND t0.last_edit_stamp = #{request.lastEditStamp}
+      </if>
+      <if test="request.lastEditor != null">
+        AND t0.last_editor = #{request.lastEditor}
+      </if>
+      <if test="request.tenantId != null">
+        AND t0.tenant_id = #{request.tenantId}
+      </if>
+      <if test="request.businessNo != null">
+        AND t0.business_no = #{request.businessNo}
+      </if>
+      <if test="request.businessType != null">
+        AND t0.business_type = #{request.businessType}
+      </if>
+      <if test="request.productName != null">
+        AND t0.product_name = #{request.productName}
+      </if>
+      <if test="request.customerName != null">
+        AND t0.customer_name LIKE CONCAT ('%',#{request.customerName},'%')
+      </if>
+      <if test="request.syncStatus != null">
+        AND t0.sync_status = #{request.syncStatus}
+      </if>
+      <if test="request.customerProperty != null">
+        AND t0.customer_property = #{request.customerProperty}
+      </if>
+      <if test="request.credentialType != null">
+        AND t0.credential_type = #{request.credentialType}
+      </if>
+      <if test="request.credentialNo != null">
+        AND t0.credential_no LIKE CONCAT ('%',#{request.credentialNo},'%')
+      </if>
+      <if test="request.isFirstLoanAccount != null">
+        AND t0.is_first_loan_account = #{request.isFirstLoanAccount}
+      </if>
+      <if test="request.projectFrom != null">
+        AND t0.project_from = #{request.projectFrom}
+      </if>
+      <if test="request.province != null">
+        AND t0.province = #{request.province}
+      </if>
+      <if test="request.city != null">
+        AND t0.city = #{request.city}
+      </if>
+      <if test="request.area != null">
+        AND t0.area = #{request.area}
+      </if>
+      <if test="request.cooperativeBank != null">
+        AND t0.cooperative_bank = #{request.cooperativeBank}
+      </if>
+      <if test="request.cooperativeBankThird != null">
+        AND t0.cooperative_bank_third = #{request.cooperativeBankThird}
+      </if>
+      <if test="request.industryGxb != null">
+        AND t0.industry_gxb = #{request.industryGxb}
+      </if>
+      <if test="request.industryJrj != null">
+        AND t0.industry_jrj = #{request.industryJrj}
+      </if>
+      <if test="request.industryGxw != null">
+        AND t0.industry_gxw = #{request.industryGxw}
+      </if>
+      <if test="request.employedPopulation != null">
+        AND t0.employed_population = #{request.employedPopulation}
+      </if>
+      <if test="request.totalAssets != null">
+        AND t0.total_assets = #{request.totalAssets}
+      </if>
+      <if test="request.businessRevenue != null">
+        AND t0.business_revenue = #{request.businessRevenue}
+      </if>
+      <if test="request.taxAmount != null">
+        AND t0.tax_amount = #{request.taxAmount}
+      </if>
+      <if test="request.enterpriseSize != null">
+        AND t0.enterprise_size = #{request.enterpriseSize}
+      </if>
+      <if test="request.industryPolicySupport != null">
+        AND t0.industry_policy_support  LIKE CONCAT('%',#{request.industryPolicySupport},'%')
+      </if>
+      <if test="request.debtBillStartDay != null">
+        AND t0.debt_bill_start_day = #{request.debtBillStartDay}
+      </if>
+      <if test="request.debtBillDueDay != null">
+        AND t0.debt_bill_due_day = #{request.debtBillDueDay}
+      </if>
+      <if test="request.debtAmount != null">
+        AND t0.debt_amount = #{request.debtAmount}
+      </if>
+      <if test="request.loanRate != null">
+        AND t0.loan_rate = #{request.loanRate}
+      </if>
+      <if test="request.principleClaimContractNo != null">
+        AND t0.principle_claim_contract_no = #{request.principleClaimContractNo}
+      </if>
+      <if test="request.warrantyContractNo != null">
+        AND t0.warranty_contract_no = #{request.warrantyContractNo}
+      </if>
+      <if test="request.guaranteeContractNo != null">
+        AND t0.guarantee_contract_no = #{request.guaranteeContractNo}
+      </if>
+      <if test="request.debtBillNo != null">
+        AND t0.debt_bill_no = #{request.debtBillNo}
+      </if>
+      <if test="request.guaranteeFeeRate != null">
+        AND t0.guarantee_fee_rate = #{request.guaranteeFeeRate}
+      </if>
+      <if test="request.counterGuaranteeType != null">
+        AND t0.counter_guarantee_type = #{request.counterGuaranteeType}
+      </if>
+      <if test="request.ristTypeAfterGuarantee != null">
+        AND t0.rist_type_after_guarantee = #{request.ristTypeAfterGuarantee}
+      </if>
+      <if test="request.riskRateBank != null">
+        AND t0.risk_rate_bank = #{request.riskRateBank}
+      </if>
+      <if test="request.riskRateOrigin != null">
+        AND t0.risk_rate_origin = #{request.riskRateOrigin}
+      </if>
+      <if test="request.riskRateAgain != null">
+        AND t0.risk_rate_again = #{request.riskRateAgain}
+      </if>
+      <if test="request.riskRateOther != null">
+        AND t0.risk_rate_other = #{request.riskRateOther}
+      </if>
+      <if test="request.remark != null">
+        AND t0.remark = #{request.remark}
+      </if>
+      <if test="request.relationEnterprise != null">
+        AND t0.relation_enterprise = #{request.relationEnterprise}
+      </if>
+      <if test="request.relationEnterpriseNo != null">
+        AND t0.relation_enterprise_no = #{request.relationEnterpriseNo}
+      </if>
+      <if test="request.contact != null">
+        AND t0.contact = #{request.contact}
+      </if>
+      <if test="request.tel != null">
+        AND t0.tel = #{request.tel}
+      </if>
+      <if test="request.businessManagerA != null">
+        AND t0.business_manager_a = #{request.businessManagerA}
+      </if>
+      <if test="request.acode != null">
+        AND t0.acode = #{request.acode}
+      </if>
+      <if test="request.aname != null">
+        AND t0.aname = #{request.aname}
+      </if>
+      <if test="request.assistB != null">
+        AND t0.assist_b = #{request.assistB}
+      </if>
+      <if test="request.bcode != null">
+        AND t0.bcode = #{request.bcode}
+      </if>
+      <if test="request.bname != null">
+        AND t0.bname = #{request.bname}
+      </if>
+      <if test="request.repaymentDate != null">
+        AND t0.repayment_date = #{request.repaymentDate}
+      </if>
+      <if test="request.repaymentBank != null">
+        AND t0.repayment_bank = #{request.repaymentBank}
+      </if>
+      <if test="request.repaymentAmount != null">
+        AND t0.repayment_amount = #{request.repaymentAmount}
+      </if>
+      <if test="request.registeredAddress != null">
+        AND t0.registered_address = #{request.registeredAddress}
+      </if>
+      <if test="request.currentAddress != null">
+        AND t0.current_address = #{request.currentAddress}
+      </if>
+      <if test="request.riskFund != null">
+        AND t0.risk_fund = #{request.riskFund}
+      </if>
+      <if test="request.antiRemark != null">
+        AND t0.anti_remark = #{request.antiRemark}
+      </if>
+      <if test="request.relatedBusNo != null">
+        AND t0.related_bus_no = #{request.relatedBusNo}
+      </if>
+      <if test="request.relatedGuaranteeNo != null">
+        AND t0.related_guarantee_no = #{request.relatedGuaranteeNo}
+      </if>
+      <if test="request.createdDeptIds != null">
+        AND t0.created_dept_ids = #{request.createdDeptIds}
+      </if>
+      <if test="request.createdCompanyId != null">
+        AND t0.created_company_id = #{request.createdCompanyId}
+      </if>
+    </where>
+    <choose>
+      <when test="request.field != null and request.order != null">
+        ORDER BY ${request.field} ${request.order}
+      </when>
+      <otherwise>
+        ORDER BY t0.id DESC
+      </otherwise>
+    </choose>
+  </select>
+</mapper>

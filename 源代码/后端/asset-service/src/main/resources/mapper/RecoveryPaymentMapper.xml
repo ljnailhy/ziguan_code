@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jk.asset.mapper.RecoveryPaymentMapper">
+
+  <!-- 通用查询结果列 -->
+  <sql id="Base_Column_List">
+    t0.id,
+    t0.tenant_id,
+    t0.creator,
+    t0.create_stamp,
+    t0.last_editor,
+    t0.last_edit_stamp,
+    t0.pay_amount,
+    t0.pay_date,
+    t0.payee,
+    t0.receiving_account,
+    t0.receiving_bank,
+    t0.pay_status,
+    t0.project_name,
+    t0.project_id,
+    t0.pay_explain,
+    t0.remarks,
+    t0.lawyer_name,
+    t0.lawyer_id,
+    t0.flow_state,
+    t0.is_deleted
+  </sql>
+
+  <select id="findAll" resultType="com.jk.asset.model.entity.RecoveryPayment">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM recovery_payment t0 left join project_info t2 on t0.project_id = t2.id and t2.is_deleted = 0
+    <where>
+      <if test="request.createStampRange != null and request.createStampRange.size() > 0">
+        AND t0.create_stamp BETWEEN
+        <foreach collection="request.createStampRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.payDateRange != null and request.payDateRange.size() > 0">
+        AND t0.pay_date BETWEEN
+        <foreach collection="request.payDateRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.orgUserIds != null and request.orgUserIds.size() > 0">
+        AND (t2.affiliated_org IN
+        <foreach collection="request.orgUserIds" index="index" item="item" open="(" separator="," close=")">      #{item}
+        </foreach>  OR
+        <foreach collection="request.orgUserIds" index="index" item="item" open="" separator=" OR " close="">
+          t2.manage LIKE CONCAT('%',#{item},'%')
+        </foreach>
+        )
+      </if>
+      <if test="request.flowState != null">
+        AND t0.flow_state = #{request.flowState}
+      </if>
+      <if test="request.id != null">
+        AND t0.id = #{request.id}
+      </if>
+      <if test="request.projectInfoList != null and request.projectInfoList.size() > 0">
+        AND t0.project_id in
+        <foreach collection="request.projectInfoList" item="item" separator="," open="(" close=")">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.lawyerId != null">
+        AND t0.lawyer_id = #{request.lawyerId}
+      </if>
+      <if test="request.projectId != null">
+        AND t0.project_id = #{request.projectId}
+      </if>
+      <if test="request.lawyerName!= null">
+        AND t0.lawyer_name LIKE CONCAT ('%',#{request.lawyerName},'%')
+      </if>
+      <if test="request.tenantId != null">
+        AND t0.tenant_id = #{request.tenantId}
+      </if>
+      <if test="request.creator != null">
+        AND t0.creator = #{request.creator}
+      </if>
+      <if test="request.createStamp != null">
+        AND t0.create_stamp = #{request.createStamp}
+      </if>
+      <if test="request.lastEditor != null">
+        AND t0.last_editor = #{request.lastEditor}
+      </if>
+      <if test="request.lastEditStamp != null">
+        AND t0.last_edit_stamp = #{request.lastEditStamp}
+      </if>
+      <if test="request.payAmount != null">
+        AND t0.pay_amount = #{request.payAmount}
+      </if>
+      <if test="request.payDate != null">
+        AND t0.pay_date = #{request.payDate}
+      </if>
+      <if test="request.payee != null">
+        AND t0.payee LIKE CONCAT ('%',#{request.payee},'%')
+      </if>
+      <if test="request.receivingAccount != null">
+        AND t0.receiving_account LIKE CONCAT ('%',#{request.receivingAccount},'%')
+      </if>
+      <if test="request.receivingBank != null">
+        AND t0.receiving_bank LIKE CONCAT ('%',#{request.receivingBank},'%')
+      </if>
+      <if test="request.payStatus != null">
+        AND t0.pay_status = #{request.payStatus}
+      </if>
+      <if test="request.projectName != null">
+        AND t0.project_name LIKE CONCAT ('%',#{request.projectName},'%')
+      </if>
+      <if test="request.payExplain != null">
+        AND t0.pay_explain = #{request.payExplain}
+      </if>
+      <if test="request.remarks != null">
+        AND t0.remarks = #{request.remarks}
+      </if>
+      <if test="request.isDeleted != null">
+        AND t0.is_deleted = #{request.isDeleted}
+      </if>
+    </where>
+    <choose>
+      <when test="request.field != null and request.order != null">
+        ORDER BY ${request.field} ${request.order}
+      </when>
+      <otherwise>
+        ORDER BY t0.id DESC
+      </otherwise>
+    </choose>
+  </select>
+  <select id="findFeeByLawFirmId" resultType="com.jk.asset.model.dto.PayFeeDTO">
+    SELECT
+    t0.lawyer_id,
+    t0.project_id,
+    t1.pay_amount
+    FROM recovery_payment t0 inner join recovery_payment_detail t1 on t0.id = t1.payment_id and t1.is_deleted = 0
+    <where>
+      t0.is_deleted = 0 and t0.pay_status = #{status}  and t1.pay_type = #{payType}
+        AND t0.lawyer_id in
+        <foreach collection="lawyerIds" item="item" separator="," open="(" close=")">
+          #{item}
+        </foreach>
+    </where>
+  </select>
+</mapper>

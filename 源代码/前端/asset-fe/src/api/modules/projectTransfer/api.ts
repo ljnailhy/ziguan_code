@@ -1,0 +1,91 @@
+import http from "@/api";
+import { VITE_API_ASSET_URL } from "@/api/config/servicePort";
+import { ProjectTransferRequest, ProjectTransferPageRequest, ProjectTransferDTO } from "./interface";
+
+/**
+ *  项目移交接口
+ * （不建议写成 request.post(xxx)，因为这样 post 时，无法 params 与 data 同时传参）
+ * 后端控制路由，isRequestRoutes 为 true，则开启后端控制路由
+ *
+ * @author wangshuai
+ * @since 2024-07-17 18:27:55
+ */
+export function projectTransfer() {
+  const CONTEXT = "/project/transfer";
+  return {
+    /**
+     * 新增
+     *
+     * @param params 项目移交入参
+     * @returns Result
+     * @author wangshuai
+     * @since 2024-07-17 18:27:55
+     */
+    add: (params: Partial<ProjectTransferRequest>) => {
+      return http.post<ProjectTransferDTO>(`${VITE_API_ASSET_URL}${CONTEXT}`, params);
+    },
+
+    /**
+     * 删除
+     *
+     * @param id 主键
+     * @returns Result
+     * @author wangshuai
+     * @since 2024-07-17 18:27:55
+     */
+    delete: (id: string | number) => {
+      return http.delete(`${VITE_API_ASSET_URL}${CONTEXT}/${id}`);
+    },
+
+    /**
+     * 修改
+     *
+     * @param params 项目移交入参
+     * @returns Result
+     * @author wangshuai
+     * @since 2024-07-17 18:27:55
+     */
+    update: (params: Partial<ProjectTransferRequest>) => {
+      return http.put<ProjectTransferDTO>(`${VITE_API_ASSET_URL}${CONTEXT}`, params);
+    },
+
+    /**
+     * 单个查找
+     *
+     * @param id 主键
+     * @returns Result
+     * @author wangshuai
+     * @since 2024-07-17 18:27:55
+     */
+    findById: (id: string | number) => {
+      return http.get<ProjectTransferDTO>(`${VITE_API_ASSET_URL}${CONTEXT}/${id}`);
+    },
+
+    /**
+     * 分页查找
+     *
+     * @param params 项目移交分页入参(含页码)
+     * @returns Result
+     * @author wangshuai
+     * @since 2024-07-17 18:27:55
+     */
+    findAll: (params: ProjectTransferPageRequest) => {
+      return http.post<Array<ProjectTransferDTO>>(
+        `${VITE_API_ASSET_URL}${CONTEXT}s?current=${params.current}&size=${params.size}`,
+        params
+      );
+    },
+
+    /**
+     * 提交
+     *
+     * @param params 执行信息入参
+     * @returns Result
+     * @author wangshuai
+     * @since 2024-07-02 09:56:48
+     */
+    submit: (params: Partial<ProjectTransferPageRequest>) => {
+      return http.put<ProjectTransferDTO>(`${VITE_API_ASSET_URL}${CONTEXT}/submit`, params);
+    }
+  };
+}

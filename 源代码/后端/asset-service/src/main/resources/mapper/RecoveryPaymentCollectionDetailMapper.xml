@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jk.asset.mapper.RecoveryPaymentCollectionDetailMapper">
+
+  <!-- 通用查询结果列 -->
+  <sql id="Base_Column_List">
+    t0.id,
+    t0.tenant_id,
+    t0.creator,
+    t0.create_stamp,
+    t0.last_editor,
+    t0.last_edit_stamp,
+    t0.payment_collection_id,
+    t0.collection_detail_type,
+    t0.reve_measure,
+    t0.collection_detail_amount,
+    t0.remarks,
+    t0.reve_id
+  </sql>
+
+  <select id="findAll" resultType="com.jk.asset.model.entity.RecoveryPaymentCollectionDetail">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM recovery_payment_collection_detail t0
+    <where>
+      <if test="request.createStampRange != null and request.createStampRange.size() > 0">
+        AND t0.create_stamp BETWEEN
+        <foreach collection="request.createStampRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.id != null">
+        AND t0.id = #{request.id}
+      </if>
+      <if test="request.tenantId != null">
+        AND t0.tenant_id = #{request.tenantId}
+      </if>
+      <if test="request.reveId != null">
+        AND t0.reve_id = #{request.reveId}
+      </if>
+      <if test="request.creator != null">
+        AND t0.creator = #{request.creator}
+      </if>
+      <if test="request.createStamp != null">
+        AND t0.create_stamp = #{request.createStamp}
+      </if>
+      <if test="request.lastEditor != null">
+        AND t0.last_editor = #{request.lastEditor}
+      </if>
+      <if test="request.lastEditStamp != null">
+        AND t0.last_edit_stamp = #{request.lastEditStamp}
+      </if>
+      <if test="request.paymentCollectionId != null">
+        AND t0.payment_collection_id = #{request.paymentCollectionId}
+      </if>
+      <if test="request.collectionDetailType != null">
+        AND t0.collection_detail_type = #{request.collectionDetailType}
+      </if>
+      <if test="request.reveMeasure != null">
+        AND t0.reve_measure = #{request.reveMeasure}
+      </if>
+      <if test="request.collectionDetailAmount != null">
+        AND t0.collection_detail_amount = #{request.collectionDetailAmount}
+      </if>
+      <if test="request.remarks != null">
+        AND t0.remarks = #{request.remarks}
+      </if>
+    </where>
+    <choose>
+      <when test="request.field != null and request.order != null">
+        ORDER BY ${request.field} ${request.order}
+      </when>
+      <otherwise>
+        ORDER BY t0.id DESC
+      </otherwise>
+    </choose>
+  </select>
+</mapper>

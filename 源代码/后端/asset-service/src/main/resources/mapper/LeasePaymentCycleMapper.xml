@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jk.asset.mapper.property.LeasePaymentCycleMapper">
+
+  <!-- 通用查询结果列 -->
+  <sql id="Base_Column_List">
+    t0.id,
+    t0.tenant_id,
+    t0.creator,
+    t0.create_stamp,
+    t0.last_editor,
+    t0.last_edit_stamp,
+    t0.do_id,
+    t0.do_type,
+    t0.start_date,
+    t0.end_date,
+    t0.remind_date,
+    t0.payment_amount,
+    t0.state,
+    t0.remark
+  </sql>
+
+  <select id="findAll" resultType="com.jk.asset.model.entity.property.LeasePaymentCycle">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM lease_payment_cycle t0
+    <where>
+      <if test="request.createStampRange != null and request.createStampRange.size() > 0">
+        AND t0.create_stamp BETWEEN
+        <foreach collection="request.createStampRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.id != null">
+        AND t0.id = #{request.id}
+      </if>
+      <if test="request.tenantId != null">
+        AND t0.tenant_id = #{request.tenantId}
+      </if>
+      <if test="request.creator != null">
+        AND t0.creator = #{request.creator}
+      </if>
+      <if test="request.createStamp != null">
+        AND t0.create_stamp = #{request.createStamp}
+      </if>
+      <if test="request.lastEditor != null">
+        AND t0.last_editor = #{request.lastEditor}
+      </if>
+      <if test="request.lastEditStamp != null">
+        AND t0.last_edit_stamp = #{request.lastEditStamp}
+      </if>
+      <if test="request.doId != null">
+        AND t0.do_id = #{request.doId}
+      </if>
+      <if test="request.doType != null">
+        AND t0.do_type = #{request.doType}
+      </if>
+      <if test="request.startDate != null">
+        AND t0.start_date = #{request.startDate}
+      </if>
+      <if test="request.endDate != null">
+        AND t0.end_date = #{request.endDate}
+      </if>
+      <if test="request.remindDate != null">
+        AND t0.remind_date = #{request.remindDate}
+      </if>
+      <if test="request.paymentAmount != null">
+        AND t0.payment_amount = #{request.paymentAmount}
+      </if>
+      <if test="request.state != null">
+        AND t0.state = #{request.state}
+      </if>
+      <if test="request.remark != null">
+        AND t0.remark = #{request.remark}
+      </if>
+    </where>
+    <choose>
+      <when test="request.field != null and request.order != null">
+        ORDER BY ${request.field} ${request.order}
+      </when>
+      <otherwise>
+        ORDER BY t0.id DESC
+      </otherwise>
+    </choose>
+  </select>
+</mapper>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.jk</groupId>
+    <artifactId>service-dependencies</artifactId>
+    <version>0.0.2-SNAPSHOT</version>
+    <relativePath/>
+  </parent>
+  <artifactId>asset-service</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>asset-service</name>
+  <description>资产服务</description>
+
+  <dependencies>
+    <!--  自建包  -->
+    <dependency>
+      <groupId>com.jk</groupId>
+      <artifactId>asset-api</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>commons-compress</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>cn.hutool</groupId>
+      <artifactId>hutool-core</artifactId>
+      <version>5.8.18</version>
+    </dependency>
+  </dependencies>
+
+  <!-- 从私仓获取 -->
+  <repositories>
+    <repository>
+      <id>maven-public</id>
+      <name>Nexus Public Repository</name>
+      <url>http://106.55.177.90:8081/repository/maven-public/</url>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+    </repository>
+  </repositories>
+
+</project>

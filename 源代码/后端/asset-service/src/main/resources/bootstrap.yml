@@ -1,0 +1,68 @@
+spring:
+  application:
+    name: @artifactId@
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.1.100:8848
+      config:
+        file-extension: yml
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+        shared-configs:
+          - dataId: __common_.yml
+            refresh: true
+          - dataId: __common_database_.yml
+            refresh: true
+          - dataId: __common_redis_.yml
+            refresh: true
+          - dataId: __common_xxl_job_.yml
+            refresh: true
+
+---
+spring:
+  profiles: def
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+
+---
+spring:
+  profiles: prod
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.1.100:8848
+
+---
+spring:
+  profiles: ggjk_prod
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.0.228:8848
+
+---
+spring:
+  profiles: hti_sit
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.10.11.32:8848
+
+---
+spring:
+  profiles: hti_uat
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.10.12.65:8848
+
+---
+spring:
+  profiles: hti_prod
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.10.1.78:8848
+

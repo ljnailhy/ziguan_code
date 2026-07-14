@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jk.asset.mapper.AllocationInfoMapper">
+
+  <!-- 通用查询结果列 -->
+  <sql id="Base_Column_List">
+    t0.id,
+    t0.tenant_id,
+    t0.creator,
+    t0.create_stamp,
+    t0.last_editor,
+    t0.last_edit_stamp,
+    t0.allocation_illustrate,
+    t0.title,
+    t0.flow_state,
+    t0.is_deleted
+  </sql>
+
+  <select id="findAll" resultType="com.jk.asset.model.entity.AllocationInfo">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM allocation_info t0
+    left join allocation_info_detail t1 on t1.allocation_id = t0.id
+    left join project_info t2 on t1.project_id = t2.id and t2.is_deleted = 0
+    <where>
+      <if test="request.createStampRange != null and request.createStampRange.size() > 0">
+        AND t0.create_stamp BETWEEN
+        <foreach collection="request.createStampRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.orgUserIds != null and request.orgUserIds.size() > 0">
+        AND (t2.affiliated_org IN
+        <foreach collection="request.orgUserIds" index="index" item="item" open="(" separator="," close=")">      #{item}
+        </foreach>  OR
+        <foreach collection="request.orgUserIds" index="index" item="item" open="" separator=" OR " close="">
+          t2.manage LIKE CONCAT('%',#{item},'%')
+        </foreach>
+        )
+      </if>
+      <if test="request.id != null">
+        AND t0.id = #{request.id}
+      </if>
+      <if test="request.tenantId != null">
+        AND t0.tenant_id = #{request.tenantId}
+      </if>
+      <if test="request.creator != null">
+        AND t0.creator = #{request.creator}
+      </if>
+      <if test="request.createStamp != null">
+        AND t0.create_stamp = #{request.createStamp}
+      </if>
+      <if test="request.lastEditor != null">
+        AND t0.last_editor = #{request.lastEditor}
+      </if>
+      <if test="request.lastEditStamp != null">
+        AND t0.last_edit_stamp = #{request.lastEditStamp}
+      </if>
+      <if test="request.allocationIllustrate != null">
+        AND t0.allocation_illustrate LIKE CONCAT('%', #{request.allocationIllustrate},'%')
+      </if>
+      <if test="request.title != null">
+        AND t0.title LIKE CONCAT('%', #{request.title},'%')
+      </if>
+      <if test="request.flowState != null">
+        AND t0.flow_state = #{request.flowState}
+      </if>
+      <if test="request.isDeleted != null">
+        AND t0.is_deleted = #{request.isDeleted}
+      </if>
+    </where>
+    GROUP BY t0.id
+    <choose>
+      <when test="request.field != null and request.order != null">
+        ORDER BY ${request.field} ${request.order}
+      </when>
+      <otherwise>
+        ORDER BY t0.id DESC
+      </otherwise>
+    </choose>
+  </select>
+</mapper>

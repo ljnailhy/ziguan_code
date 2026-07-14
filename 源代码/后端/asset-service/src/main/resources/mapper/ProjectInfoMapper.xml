@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jk.asset.mapper.ProjectInfoMapper">
+
+  <!-- 通用查询结果列 -->
+  <sql id="Base_Column_List">
+    t0.id,
+    t0.tenant_id,
+    t0.is_deleted,
+    t0.creator,
+    t0.create_stamp,
+    t0.last_editor,
+    t0.last_edit_stamp,
+    t0.third_party_id,
+    t0.primary_affiliated_org,
+    t0.affiliated_org,
+    t0.law_firm_id,
+    t0.lawyer_id,
+    t0.contract_id,
+    t0.manage,
+    t0.is_transfer,
+    t0.is_write_off,
+    t0.project_state,
+    t0.adjust_trial_date,
+    t0.debtor_id,
+    t0.project_name,
+    t0.belong_province,
+    t0.belong_city,
+    t0.belong_district,
+    t0.address,
+    t0.compensation_money,
+    t0.compensation_date,
+    t0.proceeding_ageing_date,
+    t0.transfer_date,
+    t0.compensation_plan,
+    t0.divided_insurance_debtor,
+    t0.divided_insurance_security,
+    t0.divided_insurance_again_security,
+    t0.divided_insurance_other,
+    t0.is_deleted,
+    t0.remark,
+    t0.project_is_history,
+    t1.type,
+    t1.cooperate_bank,
+    t1.cooperate_bank_branch,
+    t1.industry_type,
+    t1.big_small,
+    t1.gover_type,
+    t1.debt_begin_date,
+    t1.debt_end_date,
+    t1.loan_money,
+    t1.pact_code,
+    t1.loan_code,
+    t1.guarantee_rate,
+    t1.risk_compensation,
+    t1.acode,
+    t1.bcode,
+    t1.bid,
+    t1.aid,
+    t1.loan_pact_code,
+    t1.relation_enterprise,
+    t1.relation_enterprise_no,
+    t1.pled_pact_code,
+    t1.product_name
+  </sql>
+  <sql id="Base_Column_List1">
+    t0.id,
+    t0.law_firm_id,
+    t0.contract_id,
+    t0.manage,
+    t0.project_state,
+    t0.adjust_trial_date,
+    t0.debtor_id,
+    t0.project_name,
+    t0.address,
+    t0.compensation_money,
+    t0.compensation_date,
+    t0.proceeding_ageing_date,
+    t0.transfer_date,
+    t0.remark,
+    t1.industry_type,
+    t2.name,
+    t3.end_date,
+    t0.is_write_off
+  </sql>
+  <sql id="Base_Column_List2">
+    t0.id,
+    t0.tenant_id,
+    t0.is_deleted,
+    t0.creator,
+    t0.create_stamp,
+    t0.last_editor,
+    t0.last_edit_stamp,
+    t0.third_party_id,
+    t0.primary_affiliated_org,
+    t0.affiliated_org,
+    t0.law_firm_id,
+    t0.contract_id,
+    t0.manage,
+    t0.is_transfer,
+    t0.is_write_off,
+    t0.project_state,
+    t0.adjust_trial_date,
+    t0.debtor_id,
+    t0.project_name,
+    t0.belong_province,
+    t0.belong_city,
+    t0.belong_district,
+    t0.address,
+    t0.compensation_money,
+    t0.compensation_date,
+    t0.proceeding_ageing_date,
+    t0.transfer_date,
+    t0.compensation_plan,
+    t0.divided_insurance_debtor,
+    t0.divided_insurance_security,
+    t0.divided_insurance_again_security,
+    t0.divided_insurance_other,
+    t0.is_deleted,
+    t0.project_is_history,
+    t0.remark,
+    t1.type,
+    t1.cooperate_bank,
+    t1.cooperate_bank_branch,
+    t1.industry_type,
+    t1.big_small,
+    t1.gover_type,
+    t1.debt_begin_date,
+    t1.debt_end_date,
+    t1.loan_money,
+    t1.pact_code,
+    t1.loan_code,
+    t1.guarantee_rate,
+    t1.risk_compensation,
+    t1.acode,
+    t1.bcode,
+    t1.bid,
+    t1.aid,
+    t1.loan_pact_code,
+    t1.relation_enterprise,
+    t1.relation_enterprise_no,
+    t1.pled_pact_code,
+    t1.product_name,
+    t2.nature,
+    t2.document_type,
+    t2.document_number,
+    t3.name
+  </sql>
+  <select id="findAll" resultType="com.jk.asset.model.dto.ProjectInfoDTO">
+    SELECT
+    <include refid="Base_Column_List2" />
+    FROM project_info t0 left JOIN project_info_ext t1 ON t0.id = t1.id
+    LEFT JOIN subject_info t2 ON t0.debtor_id = t2.id AND t2.is_deleted = 0
+    left join law_firm_info t3 ON t0.law_firm_id = t3.id AND t3.is_deleted = 0
+    <where>
+      <if test="request.createStampRange != null and request.createStampRange.size() > 0">
+        AND t0.create_stamp BETWEEN
+        <foreach collection="request.createStampRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+
+
+      </if>
+      <if test="request.orgUserIds != null and request.orgUserIds.size() > 0">
+        AND (t0.affiliated_org IN
+        <foreach collection="request.orgUserIds" index="index" item="item" open="(" separator="," close=")">      #{item}
+        </foreach>  OR
+        <foreach collection="request.orgUserIds" index="index" item="item" open="" separator=" OR " close="">
+          t0.manage LIKE CONCAT('%',#{item},'%')
+        </foreach>
+        )
+      </if>
+      <if test="request.projectStateList != null and request.projectStateList.size() > 0">
+        AND project_state in
+        <foreach collection="request.projectStateList" index="index" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.idList != null and request.idList.size() > 0">
+        AND t0.id IN
+        <foreach collection="request.idList" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+
+      <if test="request.compensationDateRange != null and request.compensationDateRange.size() > 0">
+        AND t0.compensation_date BETWEEN
+        <foreach collection="request.compensationDateRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+
+      <if test="request.transferDateRange != null and request.transferDateRange.size() > 0">
+        AND t0.transfer_date BETWEEN
+        <foreach collection="request.transferDateRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.id != null">
+        AND t0.id = #{request.id}
+      </if>
+      <if test="request.projectIsHistory != null">
+        AND t0.project_is_history = #{request.projectIsHistory}
+      </if>
+      <if test="request.productName != null">
+        AND t1.product_name = #{request.productName}
+      </if>
+      <!--      <if test="request.projectInfoList != null and request.projectInfoList.size() > 0">-->
+      <!--        AND t0.project_id in-->
+      <!--        <foreach collection="request.projectInfoList" item="item" separator="," open="(" close=")">-->
+      <!--          #{item}-->
+      <!--        </foreach>-->
+      <!--      </if>-->
+      <if test="request.goverType != null">
+        AND t1.gover_type = #{request.goverType}
+      </if>
+      <if test="request.industryType != null">
+        AND t1.industry_type  = #{request.industryType}
+      </if>
+      <if test="request.tenantId != null">
+        AND t0.tenant_id = #{request.tenantId}
+      </if>
+      <if test="request.creator != null">
+        AND t0.creator = #{request.creator}
+      </if>
+      <if test="request.createStamp != null">
+        AND t0.create_stamp = #{request.createStamp}
+      </if>
+      <if test="request.lastEditor != null">
+        AND t0.last_editor = #{request.lastEditor}
+      </if>
+      <if test="request.lastEditStamp != null">
+        AND t0.last_edit_stamp = #{request.lastEditStamp}
+      </if>
+      <if test="request.thirdPartyId != null">
+        AND t0.third_party_id = #{request.thirdPartyId}
+      </if>
+      <if test="request.primaryAffiliatedOrg != null">
+        AND t0.primary_affiliated_org = #{request.primaryAffiliatedOrg}
+      </if>
+      <if test="request.affiliatedOrg != null">
+        AND t0.affiliated_org = #{request.affiliatedOrg}
+      </if>
+      <if test="request.lawFirmId != null">
+        AND t0.law_firm_id = #{request.lawFirmId}
+      </if>
+      <if test="request.lawyerId != null">
+        AND t0.lawyer_id = #{request.lawyerId}
+      </if>
+      <if test="request.contractId != null">
+        AND t0.contract_id = #{request.contractId}
+      </if>
+      <if test="request.manage != null">
+        AND t0.manage = #{request.manage}
+      </if>
+      <if test="request.isTransfer != null">
+        AND t0.is_transfer = #{request.isTransfer}
+      </if>
+      <if test="request.isWriteOff != null">
+        AND t0.is_write_off = #{request.isWriteOff}
+      </if>
+      <if test="request.projectState != null">
+        AND t0.project_state = #{request.projectState}
+      </if>
+      <if test="request.adjustTrialDate != null">
+        AND t0.adjust_trial_date = #{request.adjustTrialDate}
+      </if>
+      <if test="request.debtorId != null">
+        AND t0.debtor_id = #{request.debtorId}
+      </if>
+      <if test="request.projectName != null">
+        AND t0.project_name LIKE CONCAT ('%',#{request.projectName},'%')
+      </if>
+      <if test="request.address != null">
+        AND t0.address = #{request.address}
+      </if>
+      <if test="request.compensationMoney != null">
+        AND t0.compensation_money = #{request.compensationMoney}
+      </if>
+      <if test="request.compensationDate != null">
+        AND t0.compensation_date = #{request.compensationDate}
+      </if>
+      <if test="request.proceedingAgeingDate != null">
+        AND t0.proceeding_ageing_date = #{request.proceedingAgeingDate}
+      </if>
+      <if test="request.transferDate != null">
+        AND t0.transfer_date = #{request.transferDate}
+      </if>
+      <if test="request.compensationPlan != null">
+        AND t0.compensation_plan = #{request.compensationPlan}
+      </if>
+      <if test="request.dividedInsuranceDebtor != null">
+        AND t0.divided_insurance_debtor = #{request.dividedInsuranceDebtor}
+      </if>
+      <if test="request.dividedInsuranceSecurity != null">
+        AND t0.divided_insurance_security = #{request.dividedInsuranceSecurity}
+      </if>
+      <if test="request.dividedInsuranceAgainSecurity != null">
+        AND t0.divided_insurance_again_security = #{request.dividedInsuranceAgainSecurity}
+      </if>
+      <if test="request.dividedInsuranceOther != null">
+        AND t0.divided_insurance_other = #{request.dividedInsuranceOther}
+      </if>
+      AND t0.is_deleted = 0
+    </where>
+    <choose>
+      <when test="request.field != null and request.order != null">
+        ORDER BY ${request.field} ${request.order}
+      </when>
+      <otherwise>
+        ORDER BY t0.id DESC
+      </otherwise>
+    </choose>
+  </select>
+  <select id="findInfoById" resultType="com.jk.asset.model.dto.ProjectInfoDTO">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM project_info t0 INNER JOIN project_info_ext t1 ON t0.id = t1.id
+    where t0.is_deleted = 0 and t0.id = #{id}
+    ORDER BY t0.id DESC
+  </select>
+  <select id="findPaymentCollectionAll" resultType="com.jk.asset.model.dto.PaymentCollectionPageDTO">
+    select
+    t0.project_name,
+    t0.id as projectId,
+    t1.id as collectionId,
+    t1.collection_summary,
+    t1.collection_sign,
+    t1.collection_amount,
+    t1.collection_date,
+    t1.is_collection_historical,
+    t1.collection_ascription,
+    t1.lawyer_id,
+    t1.collection_type,
+    t3.name as lawyerName,
+    t2.document_number,
+    t2.belong_city,
+    t2.belong_province,
+    t2.belong_district
+    from  recovery_payment_collection t1
+    inner join  project_info t0  on t0.id = t1.project_id and t0.is_deleted = 0
+    left join law_firm_info t3 on t3.id = t1.lawyer_id
+    left join subject_info t2 on t2.id = t0.debtor_id and t2.is_deleted = 0
+    where t1.is_deleted = 0 and t1.collection_status = #{request.status}
+    <if test="request.collectionDateRange != null and request.collectionDateRange.size() > 0">
+      AND t1.collection_date BETWEEN
+      <foreach collection="request.collectionDateRange" index="index" item="item" open="" separator=" AND " close="">
+        #{item}
+      </foreach>
+    </if>
+    <if test="request.projectName != null">
+      AND t0.project_name LIKE CONCAT ('%',#{request.projectName},'%')
+    </if>
+    <if test="request.orgUserIds != null and request.orgUserIds.size() > 0">
+      AND (t0.affiliated_org IN
+      <foreach collection="request.orgUserIds" index="index" item="item" open="(" separator="," close=")">      #{item}
+      </foreach>  OR
+      <foreach collection="request.orgUserIds" index="index" item="item" open="" separator=" OR " close="">
+        t0.manage LIKE CONCAT('%',#{item},'%')
+      </foreach>
+      )
+    </if>
+    <if test="request.lawyerName != null">
+      AND t0.law_firm_id = #{request.lawyerName}
+    </if>
+    <if test="request.collectionSign != null">
+      AND t1.collection_sign = #{request.collectionSign}
+    </if>
+    <if test="request.collectionAscription != null">
+      AND t1.collection_ascription = #{request.collectionAscription}
+    </if>
+    ORDER BY t0.id DESC
+  </select>
+  <select id="findProjectLedgerAll" resultType="com.jk.asset.model.dto.ProjectLedgerDTO">
+    SELECT
+    <include refid="Base_Column_List1" />
+    FROM project_info t0
+    left JOIN project_info_ext t1 ON t0.id = t1.id
+    left join law_firm_info t2 on t0.law_firm_id =t2.id and t2.is_deleted = 0
+    left join  contract_info t3 on t0.contract_id = t3.id and t3.is_deleted = 0
+    left join subject_info t4 on t0.debtor_id = t4.id and t4.is_deleted = 0
+    <where>
+      <if test="request.createStampRange != null and request.createStampRange.size() > 0">
+        AND t0.create_stamp BETWEEN
+        <foreach collection="request.createStampRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.compensationDateRange != null and request.compensationDateRange.size() > 0">
+        AND t0.compensation_date BETWEEN
+        <foreach collection="request.compensationDateRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.province != null">
+        AND t4.belong_province = #{request.province}
+      </if>
+      <if test="request.city != null">
+        AND t4.belong_city = #{request.city}
+      </if>
+      <if test="request.district != null">
+        AND t4.belong_district = #{request.district}
+      </if>
+      <if test="request.manage != null">
+        AND t0.manage LIKE CONCAT ('%',#{request.manage},'%')
+      </if>
+      <if test="request.projectState != null">
+        AND t0.project_state = #{request.projectState}
+      </if>
+      <if test="request.industryType != null">
+        AND t1.industry_type = #{request.industryType}
+      </if>
+      <if test="request.projectName != null">
+        AND t0.project_name LIKE CONCAT ('%',#{request.projectName},'%')
+      </if>
+      <if test="request.lawFirmName != null">
+        AND t0.law_firm_id =  #{request.lawFirmName}
+      </if>
+      <if test="request.isWriteOff != null">
+        AND t0.is_write_off = #{request.isWriteOff}
+      </if>
+      <if test="request.orgUserIds != null and request.orgUserIds.size() > 0">
+        AND (t0.affiliated_org IN
+        <foreach collection="request.orgUserIds" index="index" item="item" open="(" separator="," close=")">      #{item}
+        </foreach>  OR
+        <foreach collection="request.orgUserIds" index="index" item="item" open="" separator=" OR " close="">
+          t0.manage LIKE CONCAT('%',#{item},'%')
+        </foreach>
+        )
+      </if>
+      <if test="request.userIds != null and request.userIds.size() > 0">
+        AND (
+        <foreach collection="request.userIds" index="index" item="item" open="" separator=" OR " close="">t0.manage LIKE
+          CONCAT('%',#{item},'%')
+        </foreach>
+        )
+      </if>
+
+      AND t0.is_deleted = 0
+    </where>
+    <choose>
+      <when test="request.field != null and request.order != null">
+        ORDER BY ${request.field} ${request.order}
+      </when>
+      <otherwise>
+        ORDER BY t0.id DESC
+      </otherwise>
+    </choose>
+  </select>
+
+  <select id="findLawyerInfo" resultType="com.jk.asset.model.dto.ProjectLedgerDTO">
+    SELECT
+    do_id as id,
+    law_firm_id as name,
+    lawyer_name,
+    phone as lawyerPhone
+    FROM
+    lawyer_info t0 INNER JOIN bill_lawyer t1 on t1.lawyer = t0.id
+    where t1.do_type = 'PROJECT_INFO' AND t1.is_effective = 1
+    AND do_id IN
+    <foreach collection="projectIds" item="item" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </select>
+  <select id="findCompensatoryCountByYear" resultType="com.jk.asset.model.dto.ProjectInfoDTO">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM project_info t0 INNER JOIN project_info_ext t1 ON t0.id = t1.id
+    where t0.is_deleted = 0  and compensation_money is not null
+    ORDER BY t0.id DESC
+  </select>
+</mapper>

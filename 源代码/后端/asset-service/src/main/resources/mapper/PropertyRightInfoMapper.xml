@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jk.asset.mapper.property.PropertyRightInfoMapper">
+
+  <!-- 通用查询结果列 -->
+  <sql id="Base_Column_List">
+    t0.id,
+    t0.tenant_id,
+    t0.creator,
+    t0.create_stamp,
+    t0.last_editor,
+    t0.last_edit_stamp,
+    t0.remark,
+    t0.property_code,
+    t0.property_end_date,
+    t0.property_owner,
+    t0.area,
+    t0.asset_use,
+    t0.address,
+    t0.property_transfer_ownership,
+    t0.property_info_id,
+    t0.asset_unit_state,
+    t0.land_use_nature,
+    t0.original_value,
+    t0.do_id,
+    t0.do_type,
+    t0.property_money,
+    t0.parent_id
+  </sql>
+
+  <select id="findAll" resultType="com.jk.asset.model.entity.property.PropertyRightInfo">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM property_right_info t0
+    <where>
+      <if test="request.createStampRange != null and request.createStampRange.size() > 0">
+        AND t0.create_stamp BETWEEN
+        <foreach collection="request.createStampRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.doIds != null and request.doIds.size() > 0">
+        AND t0.do_id in
+        <foreach collection="request.doIds" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+        </foreach>
+      </if>
+      <if test="request.assetUnitStates != null and request.assetUnitStates.size() > 0">
+        AND t0.asset_unit_state in
+        <foreach collection="request.assetUnitStates" index="index" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.id != null">
+        AND t0.id = #{request.id}
+      </if>
+      <if test="request.tenantId != null">
+        AND t0.tenant_id = #{request.tenantId}
+      </if>
+      <if test="request.creator != null">
+        AND t0.creator = #{request.creator}
+      </if>
+      <if test="request.createStamp != null">
+        AND t0.create_stamp = #{request.createStamp}
+      </if>
+      <if test="request.lastEditor != null">
+        AND t0.last_editor = #{request.lastEditor}
+      </if>
+      <if test="request.lastEditStamp != null">
+        AND t0.last_edit_stamp = #{request.lastEditStamp}
+      </if>
+      <if test="request.remark != null">
+        AND t0.remark = #{request.remark}
+      </if>
+      <if test="request.propertyCode != null">
+        AND t0.property_code = #{request.propertyCode}
+      </if>
+      <if test="request.propertyEndDate != null">
+        AND t0.property_end_date = #{request.propertyEndDate}
+      </if>
+      <if test="request.propertyOwner != null">
+        AND t0.property_owner = #{request.propertyOwner}
+      </if>
+      <if test="request.area != null">
+        AND t0.area = #{request.area}
+      </if>
+      <if test="request.assetUse != null">
+        AND t0.asset_use = #{request.assetUse}
+      </if>
+      <if test="request.address != null">
+        AND t0.address = #{request.address}
+      </if>
+      <if test="request.propertyTransferOwnership != null">
+        AND t0.property_transfer_ownership = #{request.propertyTransferOwnership}
+      </if>
+    </where>
+    <choose>
+      <when test="request.field != null and request.order != null">
+        ORDER BY ${request.field} ${request.order}
+      </when>
+      <otherwise>
+        ORDER BY t0.id DESC
+      </otherwise>
+    </choose>
+  </select>
+  <select id="findAssetDetailLedger" resultType="com.jk.asset.model.dto.AssetDetailLedgerDTO">
+    select
+    pi.affiliated_unit,pi.property_name,pi.project_name,pi.land_use_nature,pi.transfer_ownership_remark,
+    pri.area,pri.address,pri.property_owner,pri.property_end_date,pri.property_code,pri.original_value,pri.asset_unit_state,
+    sub.property_money
+    from property_right_info pri
+    left join property_info pi on pri.property_info_id = pi.id and pri.parent_id is null
+    left join (
+    select
+    aid.property_right_info_id,sum(aid.property_money) as property_money
+    from asset_transfer t
+    left join asset_income_distribution aid on t.id=aid.do_id
+    where t.flow_state='completed' and aid.property_id is not null
+    GROUP BY aid.property_right_info_id
+    union all
+    select
+    property_right_info_id,sum(property_money) as property_money
+    from asset_income_distribution
+    where do_type='LEASE_PAYMENT_CYCLE' and property_id is not null
+    GROUP BY property_right_info_id
+    ) sub on pri.id=sub.property_right_info_id
+    <where>
+      <if test="request.propertyName != null">
+        AND pi.property_name like CONCAT('%', #{request.propertyName}, '%')
+      </if>
+      <if test="request.projectName != null">
+        AND pi.project_name like CONCAT('%', #{request.projectName}, '%')
+      </if>
+      <if test="request.assetUnitState != null">
+        AND pri.asset_unit_state  =  #{request.assetUnitState}
+      </if>
+      <if test="request.propertyEndDateRange != null and request.propertyEndDateRange.size() > 0">
+        AND pri.property_end_date BETWEEN
+        <foreach collection="request.propertyEndDateRange" index="index" item="item" open="" separator=" AND " close="">
+          #{item}
+        </foreach>
+      </if>
+      <if test="request.followUpPerson != null">
+        AND pi.follow_up_person  like CONCAT('%', #{request.followUpPerson}, '%')
+      </if>
+    </where>
+
+  </select>
+
+</mapper>
